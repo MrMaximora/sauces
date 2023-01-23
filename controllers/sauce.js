@@ -55,18 +55,12 @@ exports.postSauce = (request, response, next) => {
     const sauceObject = JSON.parse(request.body.sauce);
     delete request.body._id;
     const sauce = new Sauce({
-        userId: request.auth.userId,
-        name: sauceObject.name,
-        manufacturer: sauceObject.manufacturer,
-        description: sauceObject.description,
-        mainPepper: sauceObject.mainPepper,
-        imageUrl: request.file.filename,
-        heat: sauceObject.heat,
+        ...sauceObject,
+        imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`,
         likes: 0,
         disliked: 0, 
         usersLiked: [],
         usersDisliked: []
-
     });
     sauce.save()
         .then(() => response.status(201).json({ message: 'Objet enregistré !' }))
