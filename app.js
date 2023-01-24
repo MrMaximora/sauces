@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const userRoutes = require("./routes/user");
 const sauceRoutes = require('./routes/sauce');
 const path = require('path');
+require('dotenv').config();
 
 // DEPRECATION WARNINGS
 mongoose.set('strictQuery', false);
@@ -11,7 +12,7 @@ mongoose.set('strictQuery', false);
 //CONNECT TO MONGODB WITH MANGOOSE
 mongoose
   .connect(
-    "mongodb+srv://MrMaximora:maxencedu16@cluster0.li7ukfe.mongodb.net/?retryWrites=true&w=majority",
+    process.env.MONGO_CONNECT,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !") )
