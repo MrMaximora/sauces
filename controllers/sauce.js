@@ -28,13 +28,13 @@ exports.updateSauce = (request, response, next) => {
                         .catch(error => response.status(400).json({ error }))
                 })
             })
-            .catch(error => res.status(500).json({ error }));
+            .catch(error => response.status(500).json({ error }));
     }
     else {
-        const sauceObject = { ...req.body };
-        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-            .then(() => res.status(200).json({ message: 'Sauce modifiée!' }))
-            .catch(error => res.status(400).json({ error }));
+        const sauceObject = { ...request.body };
+        Sauce.updateOne({ _id: request.params.id }, { ...sauceObject, _id: request.params.id })
+            .then(() => response.status(200).json({ message: 'Sauce modifiée!' }))
+            .catch(error => response.status(400).json({ error }));
     }
 };
 
@@ -53,12 +53,12 @@ exports.deleteSauce = (request, response, next) => {
 
 exports.postSauce = (request, response, next) => {
     const sauceObject = JSON.parse(request.body.sauce);
-    delete request.body._id;
+    delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`,
         likes: 0,
-        disliked: 0, 
+        dislikes: 0, 
         usersLiked: [],
         usersDisliked: []
     });
