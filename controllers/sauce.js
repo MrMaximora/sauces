@@ -68,5 +68,39 @@ exports.postSauce = (request, response, next) => {
 };
 
 exports.likeSauce = (request, response, next) => {
-
-};
+    const userId = request.body.userId;
+    const like = request.body.like;
+    const sauceId = request.params.id;
+    Sauce.findOne({ _id: sauceId })
+        .then(sauce => {
+            const newValues = {
+                usersLiked: sauce.usersLiked,
+                usersDisliked: sauce.usersDisliked,
+                likes: 0,
+                dislikes: 0
+            }
+            switch (like) {
+                case 1:
+                    newValues.usersLiked.push(userId);
+                    break;
+                case -1:
+                    newValues.usersDisliked.push(userId);
+                    break;
+                case 0:
+                    if (newValues.usersLiked.includes(userId)) {
+                        const index = newValues.usersLiked.indexOf(userId);
+                        newValues.usersLiked.splice(index, 1);
+                    } else {
+                        const index = newValues.usersDisliked.indexOf(userId);
+                        newValues.usersDisliked.splice(index, 1);
+                    }
+                    break;
+            };
+            newValues.likes = newValues.usersLiked.length;
+            newValues.dislikes = newValues.usersDisliked.length;
+            Sauce.updateOne({ _id: sauceId }, newValues )
+                .then(() => response.status(200).json({ message: 'Sauce notée !' }))
+                .catch(error => response.status(400).json({ error }))  
+        })
+        .catch(error => response.status(500).json({ error }));
+}  
